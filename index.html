@@ -94,10 +94,10 @@
   <script>
     const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
     const apiUrl = 'https://script.google.com/macros/s/AKfycby0FaNh0AisU_DD5EeSETnzao_iBEuHTbuD86UutfUhLP6c5YjN4xcAUnAnax0_5AQS/exec';
-    // const url = proxyUrl + apiUrl;
+    const url = proxyUrl + apiUrl;
     // const url = proxyUrl +  apiUrl; 
-    const url = apiUrl;
-    console.log("here");
+    // const url = apiUrl;
+    // console.log("here");
     document.getElementById('verifyButton').addEventListener('click', async function() {
       var digits = [
         document.getElementById('digit1').value,
@@ -128,7 +128,7 @@
         try {
           let response = await fetch(url, {
             method: 'POST',
-            mode: 'no-cors',
+            // mode: 'no-cors',
             headers: {
               'Content-Type': 'application/json'
             },
