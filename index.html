@@ -93,11 +93,10 @@
 
   <script>
     const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    const apiUrl = 'https://script.google.com/macros/s/AKfycby0FaNh0AisU_DD5EeSETnzao_iBEuHTbuD86UutfUhLP6c5YjN4xcAUnAnax0_5AQS/exec';
-    const url = proxyUrl + apiUrl;
-    // const url = proxyUrl +  apiUrl; 
-    // const url = apiUrl;
-    // console.log("here");
+    const apiUrl = 'https://script.google.com/macros/s/AKfycbzbku44ZtJ-xgz004Iymh0lxEmVANsnJFyCjWT3VGbS5YVbyeIlSR6_XDlzQrXiwk4d/exec';
+    // const url = proxyUrl + apiUrl;
+    const url = proxyUrl +  apiUrl; 
+
     document.getElementById('verifyButton').addEventListener('click', async function() {
       var digits = [
         document.getElementById('digit1').value,
@@ -128,15 +127,14 @@
         try {
           let response = await fetch(url, {
             method: 'POST',
-            // mode: 'no-cors',
             headers: {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({ number: pin })
           });
-          console.log(response);
+
           let result = await response.json();
-          console.log(result);
+        //   console.log(result);
           
           if (result.match) {
             resultMessage.textContent = 'PIN verified successfully!';
@@ -155,7 +153,6 @@
           }
         } catch (error) {
           resultMessage.textContent = 'An error occurred. Please try again.';
-          console.log(error);
           resultMessage.classList.remove('hidden');
           resultMessage.classList.add('text-red-500'); // Error message color
         } finally {
