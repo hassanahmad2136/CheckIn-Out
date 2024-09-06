@@ -75,7 +75,7 @@
 
     <script>
         const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-        const apiUrl = 'https://script.google.com/macros/s/AKfycbzbHs3uaGRcPYqN5WzbkW0ckXncRIHneO_7lzRphrT1WXdj9wMVUBuoaXaPmk4oN2Jdqg/exec';
+        const apiUrl = 'https://script.google.com/macros/s/AKfycbyKHZJQbQqRvBVzSWxedlQ0jwh1EKX20MduST1pNFw2hvAwgbgji4tIy7nlrlTNON01UA/exec';
         const url = proxyUrl + apiUrl;
 
         // Fetch the username from localStorage
@@ -88,7 +88,8 @@
             
             const data = {
                 action: 'getStatus',
-                PIN: pin
+                PIN: pin,
+                sht: 'c'
             };
 
             // Send request to the Google Apps Script URL
@@ -133,7 +134,8 @@
                 firstName: firstName,
                 lastName: lastName,
                 category: '',
-                HotelName: 'Green River Inn'
+                HotelName: 'Green River Inn',
+                sht: 'c'
             };
 
             // Send request to the Google Apps Script URL
