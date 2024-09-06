@@ -75,7 +75,7 @@
 
     <script>
         const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-        const apiUrl = 'https://script.google.com/macros/s/AKfycbyjStKRfScCFmwitc6Y1hMz3x716CKDE-bTcHMH5BJKjC-Y-LE082IEZ7hquLPOUcGigQ/exec';
+        const apiUrl = 'https://script.google.com/macros/s/AKfycbzBoww_-CTg6D-JwDrJvrOIBnl4YABLGyLhc3rLJRaQMH9aIcWUf0woiJKtGXQDAbojrA/exec';
         const url = proxyUrl + apiUrl;
 
         // Fetch the username from localStorage
@@ -88,8 +88,8 @@
             
             const data = {
                 action: 'getStatus',
-                PIN: pin,
-                num: 1
+                PIN: pin
+                // num: 1
             };
 
             // Send request to the Google Apps Script URL
