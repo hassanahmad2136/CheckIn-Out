@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Green River Inn | Employee Portal</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #a2c2e3, #f0f4f8);
+      font-family: 'Arial', sans-serif;
+    }
+    .container {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .container:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+    .input-box {
+      width: 60px;
+      height: 60px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 24px;
+      margin: 0 5px;
+      transition: border-color 0.3s;
+    }
+    .input-box:focus {
+      border-color: #4a90e2;
+      outline: none;
+    }
+    .error-border {
+      border-color: #f56565 !important; /* Tailwind's red-400 color */
+    }
+    .error-message {
+      color: #f56565; /* Tailwind's red-400 color */
+      font-size: 0.875rem; /* Tailwind's text-sm */
+    }
+    .input-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    .result-message {
+      color: #4caf50; /* Tailwind's green-500 color */
+      font-size: 1rem; /* Tailwind's text-base */
+      margin-top: 1rem;
+      text-align: center;
+    }
+    /* Loader styles */
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 4px solid #3498db;
+      width: 32px;
+      height: 32px;
+      animation: spin 1s linear infinite;
+      display: none; /* Hide loader by default */
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="flex flex-col items-center justify-center min-h-screen py-6 px-4">
+    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl container">
+      <div class="flex flex-col items-center mb-6 md:flex-row md:items-start">
+        <img src="Images/GreenRiverInn_Logo.png" width="120" class="mb-4 md:mb-0 md:mr-4"/>
+        <div class="text-center md:text-left">
+          <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Welcome to Green River Inn</h1>
+          <p class="text-2xl font-bold text-gray-800">Fort St. John, BC</p>
+        </div>
+      </div>
+      <p class="text-lg text-gray-600 mb-6 text-center">Enter your 5-digit PIN to proceed</p>
+      <div class="input-container">
+        <input id="digit1" class="input-box" type="text" maxlength="1" inputmode="numeric">
+        <input id="digit2" class="input-box" type="text" maxlength="1" inputmode="numeric">
+        <input id="digit3" class="input-box" type="text" maxlength="1" inputmode="numeric">
+        <input id="digit4" class="input-box" type="text" maxlength="1" inputmode="numeric">
+        <input id="digit5" class="input-box" type="text" maxlength="1" inputmode="numeric">
+      </div>
+      <p id="errorMessage" class="hidden error-message text-center mt-2">Please enter a valid 5-digit PIN</p>
+      <div id="resultMessage" class="result-message hidden"></div>
+      <div id="loader" class="loader"></div> <!-- Loader element -->
+      <button id="verifyButton" class="mt-6 w-full px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">Verify</button>
+    </div>
+  </div>
+
+  <script>
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const apiUrl = 'https://script.google.com/macros/s/AKfycbymC9pWLpCt5LOevm-u7c0bv9CGjSoNI8WJXeHxRZ7HBP4W0YrmD50jX0ed8oCfsAz85A/exec';
+    // const url = proxyUrl + apiUrl;
+    const url = proxyUrl +  apiUrl; 
+
+    document.getElementById('verifyButton').addEventListener('click', async function() {
+      var digits = [
+        document.getElementById('digit1').value,
+        document.getElementById('digit2').value,
+        document.getElementById('digit3').value,
+        document.getElementById('digit4').value,
+        document.getElementById('digit5').value
+      ];
+      var isValid = digits.every(digit => /^\d$/.test(digit)) && digits.length === 5;
+
+      var inputBoxes = document.querySelectorAll('.input-box');
+      var errorMessage = document.getElementById('errorMessage');
+      var resultMessage = document.getElementById('resultMessage');
+      var loader = document.getElementById('loader');
+      var verifyButton = document.getElementById('verifyButton');
+
+      if (isValid) {
+        errorMessage.classList.add('hidden');
+        inputBoxes.forEach(box => box.classList.remove('error-border'));
+
+        // Show loader and hide button
+        loader.style.display = 'block';
+        verifyButton.style.display = 'none';
+
+        // Prepare data for POST request
+        var pin = digits.join('');
+        
+        try {
+          let response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ number: pin })
+          });
+
+          let result = await response.json();
+        //   console.log(result);
+          
+          if (result.match) {
+            resultMessage.textContent = 'PIN verified successfully!';
+            resultMessage.classList.remove('hidden');
+            resultMessage.classList.add('text-green-500'); // Success message color
+            localStorage.setItem("PIN",result.row[0]);
+            localStorage.setItem("Fname",result.row[1]);
+            localStorage.setItem("Lname",result.row[2]);
+            localStorage.setItem("category",result.row[3]);
+            setTimeout(RedirectNextPage,1500);
+
+          } else {
+            resultMessage.textContent = 'Invalid PIN. Please try again.';
+            resultMessage.classList.remove('hidden');
+            resultMessage.classList.add('text-red-500'); // Error message color
+          }
+        } catch (error) {
+          resultMessage.textContent = 'An error occurred. Please try again.';
+          resultMessage.classList.remove('hidden');
+          resultMessage.classList.add('text-red-500'); // Error message color
+        } finally {
+          // Hide loader and show button
+          loader.style.display = 'none';
+          verifyButton.style.display = 'block';
+        }
+      } else {
+        errorMessage.classList.remove('hidden');
+        resultMessage.classList.add('hidden');
+        inputBoxes.forEach(box => {
+          if (!/^\d$/.test(box.value)) {
+            box.classList.add('error-border');
+          } else {
+            box.classList.remove('error-border');
+          }
+        });
+      }
+    });
+
+    function RedirectNextPage(){
+        document.location.href = 'dashboard.html'
+    }
+    document.querySelectorAll('.input-box').forEach((box, index, boxes) => {
+      box.addEventListener('input', function() {
+        if (this.value.length === 1 && index < boxes.length - 1) {
+          boxes[index + 1].focus();
+        }
+      });
+
+      box.addEventListener('keydown', function(event) {
+        if (event.key === 'Backspace' && this.value.length === 0 && index > 0) {
+          boxes[index - 1].focus();
+        }
+      });
+    });
+
+    window.addEventListener('load', function() {
+    // Your code here
+    localStorage.removeItem("PIN");
+    localStorage.removeItem("Fname");
+    localStorage.removeItem("Lname");
+    localStorage.removeItem("category");
+});
+  </script>
+</body>
+</html>
